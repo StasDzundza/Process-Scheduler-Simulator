@@ -67,10 +67,7 @@ public class SchedulingAlgorithm {
     }
 
     public static Results multipleQueuesAlgorithm(int runtime, Vector processVector, Results result) {
-        int i = 0;
         int comptime = 0;
-        int currentProcess = 0;
-        int previousProcess = 0;
         int size = processVector.size();
         int completed = 0;
         MultipleQueuesScheduler scheduler = new MultipleQueuesScheduler(processVector);
@@ -81,25 +78,33 @@ public class SchedulingAlgorithm {
         try {
             PrintStream out = new PrintStream(new FileOutputStream(resultsFile));
             sProcess process = scheduler.getNextProcess();
-            out.println("Process: " + process.processIndex + " registered... (" + process.cputime + " " + process.ioblocking + " " + process.cpudone + ")");
+            //out.println("Process: " + process.processIndex + " registered... (" + process.cputime + " " + process.ioblocking + " " + process.cpudone + ")");
+            out.println(getProcessInfo(process,"registered"));
             while (comptime < runtime) {
                 if (process.cpudone == process.cputime) {
                     completed++;
-                    out.println("Process: " + process.processIndex + " completed... (" + process.cputime + " " + process.ioblocking + " " + process.cpudone + ")");
+                    //out.println("Process: " + process.processIndex + " completed... (" + process.cputime + " " + process.ioblocking + " " + process.cpudone + ")");
+                    out.println(getProcessInfo(process,"completed"));
                     if (completed == size) {
                         result.compuTime = comptime;
                         out.close();
                         return result;
                     }
                     process = scheduler.getNextProcess();
-                    out.println("Process: " + process.processIndex + " registered... (" + process.cputime + " " + process.ioblocking + " " + process.cpudone + ")");
+                    //out.println("Process: " + process.processIndex + " registered... (" + process.cputime + " " + process.ioblocking + " " + process.cpudone + ")");
+                    out.println(getProcessInfo(process,"registered"));
                 }
                 if (process.ioblocking == process.ionext) {
-                    out.println("Process: " + process.processIndex + " I/O blocked... (" + process.cputime + " " + process.ioblocking + " " + process.cpudone + ")");
+                    //out.println("Process: " + process.processIndex + " I/O blocked... (" + process.cputime + " " + process.ioblocking + " " + process.cpudone + ")");
                     process.numblocked++;
                     process.ionext = 0;
+                    process.usedQuantumOfTime++;
+                    out.println(getProcessInfo(process,"I/O blocked"));
+                    if(process.usedQuantumOfTime == process.quantumOfTime)
+                        scheduler.decreaseByOneCurrentProcessPriority();
                     process = scheduler.getNextProcess();
-                    out.println("Process: " + process.processIndex + " registered... (" + process.cputime + " " + process.ioblocking + " " + process.cpudone + ")");
+                    //out.println("Process: " + process.processIndex + " registered... (" + process.cputime + " " + process.ioblocking + " " + process.cpudone + ")");
+                    out.println(getProcessInfo(process,"registered"));
                 }
                 process.cpudone++;
                 if (process.ioblocking > 0) {
@@ -111,5 +116,11 @@ public class SchedulingAlgorithm {
         } catch (IOException e) { /* Handle exceptions */ }
         result.compuTime = comptime;
         return result;
+    }
+
+    public static String getProcessInfo(sProcess process,String state){
+        return String.format("Process with index %d and priority %d used %d of %d quantum of time %s ...(" +
+                "%d %d %d)",process.processIndex,process.priority,process.usedQuantumOfTime,process.quantumOfTime,state,process.cputime,process.ioblocking,
+                process.cpudone);
     }
 }

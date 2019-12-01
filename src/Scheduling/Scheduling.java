@@ -26,9 +26,10 @@ public class Scheduling {
     String tmp;
     int cputime = 0;
     int ioblocking = 0;
+    int priority = 0;
     double X = 0.0;
 
-    try {   
+    try {
       //BufferedReader in = new BufferedReader(new FileReader(f));
       DataInputStream in = new DataInputStream(new FileInputStream(f));
       while ((line = in.readLine()) != null) {
@@ -51,13 +52,14 @@ public class Scheduling {
           StringTokenizer st = new StringTokenizer(line);
           st.nextToken();
           ioblocking = Common.s2i(st.nextToken());
+          priority = Common.s2i(st.nextToken());
           X = Common.R1();
           while (X == -1.0) {
             X = Common.R1();
           }
           X = X * standardDev;
           cputime = (int) X + meanDev;
-          processVector.addElement(new sProcess(cputime, ioblocking, 0, 0, 0));          
+          processVector.addElement(new sProcess(cputime, ioblocking,priority, 0, 0, 0));
         }
         if (line.startsWith("runtime")) {
           StringTokenizer st = new StringTokenizer(line);
@@ -94,7 +96,7 @@ public class Scheduling {
     if (!(f.exists())) {
       System.out.println("Scheduling: error, file '" + f.getName() + "' does not exist.");
       System.exit(-1);
-    }  
+    }
     if (!(f.canRead())) {
       System.out.println("Scheduling: error, read of " + f.getName() + " failed.");
       System.exit(-1);
@@ -103,20 +105,19 @@ public class Scheduling {
     Init(args[0]);
     if (processVector.size() < processnum) {
       i = 0;
-      while (processVector.size() < processnum) {       
-          double X = Common.R1();
-          while (X == -1.0) {
-            X = Common.R1();
-          }
-          X = X * standardDev;
+      while (processVector.size() < processnum) {
+        double X = Common.R1();
+        while (X == -1.0) {
+          X = Common.R1();
+        }
+        X = X * standardDev;
         int cputime = (int) X + meanDev;
-        processVector.addElement(new sProcess(cputime,i*100,0,0,0));          
+        processVector.addElement(new sProcess(cputime,i*100,i,0,0,0));
         i++;
       }
     }
     result = SchedulingAlgorithm.multipleQueuesAlgorithm(runtime, processVector, result);
     try {
-      //BufferedWriter out = new BufferedWriter(new FileWriter(resultsFile));
       PrintStream out = new PrintStream(new FileOutputStream(resultsFile));
       out.println("Scheduling Type: " + result.schedulingType);
       out.println("Scheduling Name: " + result.schedulingName);
@@ -138,7 +139,7 @@ public class Scheduling {
       }
       out.close();
     } catch (IOException e) { /* Handle exceptions */ }
-  System.out.println("Completed.");
+    System.out.println("Completed.");
   }
 }
 

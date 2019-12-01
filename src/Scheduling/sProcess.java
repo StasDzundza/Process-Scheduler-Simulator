@@ -6,23 +6,28 @@ public class sProcess implements Comparable{
   public int cpudone;
   public int ionext;
   public int numblocked;
+  public int priority;
+  public int quantumOfTime;
+  public int usedQuantumOfTime;
   public int processIndex;
   public static int index;
   static {
     index = 0;
   }
-  public sProcess (int cputime, int ioblocking, int cpudone, int ionext, int numblocked) {
+  public sProcess (int cputime, int ioblocking,int priority, int cpudone, int ionext, int numblocked) {
     this.cputime = cputime;
     this.ioblocking = ioblocking;
+    this.priority = priority;
     this.cpudone = cpudone;
     this.ionext = ionext;
     this.numblocked = numblocked;
+    this.usedQuantumOfTime = 0;
     this.processIndex = index++;
   }
 
   @Override
-  public int compareTo(java.lang.Object o){
+  public int compareTo(Object o){
     sProcess otherProcess = (sProcess)o;
-    return (otherProcess.cputime/otherProcess.ioblocking) - (cputime/ioblocking);
+    return otherProcess.priority - this.priority;
   }
 }
