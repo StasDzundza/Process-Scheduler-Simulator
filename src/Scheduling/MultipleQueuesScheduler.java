@@ -54,7 +54,7 @@ public class MultipleQueuesScheduler{
         for(int i = 0; i < numberOfQueues;i++){
             Deque currentProcessGroup = (Deque) queues.get(i);
             while(currentProcessGroup.peekFirst()!=null){//if Queue isn`t empty
-                sProcess currentProcess = (sProcess)currentProcessGroup.peek();
+                sProcess currentProcess = (sProcess)currentProcessGroup.peekFirst();
                 if(currentProcess.cpudone != currentProcess.cputime){
                     currentProcessGroup.removeFirst();
                     currentProcessGroup.addLast(currentProcess);//set currentProcess to the end of queue
@@ -101,7 +101,7 @@ public class MultipleQueuesScheduler{
             if(indexOfProcessQueue == queues.size() - 1){//there is no queue with lower priority
                 Deque<sProcess> queue = new LinkedList<>();
                 queue.add(currentProcess);
-                queues.add(queue.size(),queue);
+                queues.add(queues.size(),queue);
             }
             else{
                 Deque currentProcessGroup = (Deque) queues.get(indexOfProcessQueue + 1);
