@@ -4,13 +4,13 @@ Simulation Run Time: 10000
 Mean: 1100
 Standard Deviation: 510
 Process #	CPU Time	IO Blocking	CPU Completed	CPU Blocked
-0		1123 (ms)	100 (ms)	800 (ms)	8 times
-1		1543 (ms)	100 (ms)	800 (ms)	8 times
-2		1543 (ms)	100 (ms)	800 (ms)	8 times
-3		1543 (ms)	500 (ms)	1543 (ms)	3 times
-4		1543 (ms)	500 (ms)	1543 (ms)	3 times
-5		1543 (ms)	500 (ms)	1543 (ms)	3 times
-6		1543 (ms)	260 (ms)	1543 (ms)	5 times
-7		1543 (ms)	260 (ms)	1308 (ms)	5 times
-8		1543 (ms)	30 (ms)		60 (ms)		2 times
-9		1543 (ms)	30 (ms)		60 (ms)		2 times
+0		1181 (ms)	100 (ms)	1119 (ms)	11 times
+1		1464 (ms)	100 (ms)	1100 (ms)	11 times
+2		1464 (ms)	100 (ms)	1100 (ms)	11 times
+3		1181 (ms)	500 (ms)	1181 (ms)	2 times
+4		1464 (ms)	500 (ms)	1400 (ms)	2 times
+5		1464 (ms)	500 (ms)	1400 (ms)	2 times
+6		1464 (ms)	260 (ms)	1200 (ms)	4 times
+7		1494 (ms)	260 (ms)	1200 (ms)	4 times
+8		1181 (ms)	30 (ms)		150 (ms)	5 times
+9		1464 (ms)	30 (ms)		150 (ms)	5 times

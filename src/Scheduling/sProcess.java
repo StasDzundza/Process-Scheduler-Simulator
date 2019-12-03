@@ -7,10 +7,11 @@ public class sProcess implements Comparable{
   public int ionext;
   public int numblocked;
   public int priority;
-  public int quantumOfTime;
   public int usedQuantumOfTime;
   public int processIndex;
   public static int index;
+  public ProcessDeque queue;
+
   static {
     index = 0;
   }

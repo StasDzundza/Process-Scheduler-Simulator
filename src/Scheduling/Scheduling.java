@@ -12,10 +12,11 @@ import java.util.*;
 
 public class Scheduling {
 
-  private static int processnum = 5;
+  private static int processnum = 10;
   private static int meanDev = 1000;
   private static int standardDev = 100;
   private static int runtime = 1000;
+  private static int quantum = 100;
   private static Vector processVector = new Vector();
   private static Results result = new Results("null","null",0);
   private static String resultsFile = "Summary-Results";
@@ -47,6 +48,11 @@ public class Scheduling {
           StringTokenizer st = new StringTokenizer(line);
           st.nextToken();
           standardDev = Common.s2i(st.nextToken());
+        }
+        if (line.startsWith("quantum")) {
+          StringTokenizer st = new StringTokenizer(line);
+          st.nextToken();
+          quantum = Common.s2i(st.nextToken());
         }
         if (line.startsWith("process")) {
           StringTokenizer st = new StringTokenizer(line);
@@ -116,7 +122,7 @@ public class Scheduling {
         i++;
       }
     }
-    result = SchedulingAlgorithm.multipleQueuesAlgorithm(runtime, processVector, result);
+    result = SchedulingAlgorithm.multipleQueuesAlgorithm(runtime, processVector,quantum, result);
     try {
       PrintStream out = new PrintStream(new FileOutputStream(resultsFile));
       out.println("Scheduling Type: " + result.schedulingType);

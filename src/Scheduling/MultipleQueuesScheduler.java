@@ -5,9 +5,11 @@ import java.util.*;
 public class MultipleQueuesScheduler{
     Vector queues;
     sProcess currentProcess = null;
+    private int quantum;
 
-    public MultipleQueuesScheduler(Vector processes){
+    public MultipleQueuesScheduler(Vector processes,int quantum){
         queues = new Vector();
+        this.quantum = quantum;
         splitProcessesToQueues(processes);
     }
 
@@ -21,21 +23,19 @@ public class MultipleQueuesScheduler{
         );
         int numberOfProcesses = processVector.size();
         int i = 0;
-        int numberOfQueue = -1;
         while (i < numberOfProcesses){
-            numberOfQueue++;
-            Deque<sProcess> queue = new LinkedList<>();
             sProcess process = (sProcess)processVector.get(i);
-            process.quantumOfTime = (int) Math.pow(2,numberOfQueue);
             int priority = process.priority;
-            queue.addLast((sProcess)processVector.get(i));
+            Deque<sProcess> queue = new ProcessDeque(priority,quantum*(int) Math.pow(2,queues.size()));
+            process.queue = (ProcessDeque)queue;
+            queue.addLast(process);
             while(true){
                 i++;
                 if(i < numberOfProcesses){
                     sProcess currentProcess = (sProcess)processVector.get(i);
                     int currentPriority = currentProcess.priority;
                     if(currentPriority == priority){
-                        currentProcess.quantumOfTime = (int) Math.pow(2,numberOfQueue);
+                        currentProcess.queue = (ProcessDeque)queue;//++
                         queue.addLast(currentProcess);
                     }else{
                         break;
@@ -69,7 +69,7 @@ public class MultipleQueuesScheduler{
     }
 
     //unused method yet
-    public boolean increaseByOneCurrentProcessPriority(){
+    /*public boolean increaseByOneCurrentProcessPriority(){
         int indexOfProcessQueue = removeCurrentProcessFromHisQueue();
         if(indexOfProcessQueue!=-1){
             currentProcess.priority++;
@@ -90,21 +90,23 @@ public class MultipleQueuesScheduler{
         else{
             return false;
         }
-    }
+    }*/
 
     public boolean decreaseByOneCurrentProcessPriority(){
         int indexOfProcessQueue = removeCurrentProcessFromHisQueue();
         if(indexOfProcessQueue!=-1){
-            currentProcess.priority--;
             currentProcess.usedQuantumOfTime = 0;
-            currentProcess.quantumOfTime = (int) Math.pow(2,indexOfProcessQueue+1);
             if(indexOfProcessQueue == queues.size() - 1){//there is no queue with lower priority
-                Deque<sProcess> queue = new LinkedList<>();
+                currentProcess.priority--;
+                Deque<sProcess> queue = new ProcessDeque(currentProcess.priority,quantum*(int) Math.pow(2,queues.size()));
                 queue.add(currentProcess);
+                currentProcess.queue = (ProcessDeque)queue;
                 queues.add(queues.size(),queue);
             }
             else{
                 Deque currentProcessGroup = (Deque) queues.get(indexOfProcessQueue + 1);
+                currentProcess.queue = (ProcessDeque)currentProcessGroup;
+                currentProcess.priority = ((ProcessDeque)currentProcessGroup).getPriority();
                 currentProcessGroup.addLast(currentProcess);
             }
             return true;
